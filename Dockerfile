@@ -28,5 +28,5 @@ COPY start.sh /sbin/start_xvfb.sh
 RUN chmod a+x /sbin/start_xvfb.sh
 
 ENTRYPOINT ["tini", "-g", "--", "start_xvfb.sh"]
-# CMD ["/bin/bash"]
-CMD ["jupyter", "notebook", "--port=8877", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+CMD ["/bin/bash"]
+# CMD ["jupyter", "notebook", "--port=8877", "--no-browser", "--ip=0.0.0.0", "--allow-root"]

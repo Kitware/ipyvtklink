@@ -48,5 +48,5 @@ plotter.show()
 
 ```
 docker build -t ipyvtk .
-docker run -p 8877:8877 ipyvtk
+docker run -p 8877:8877 ipyvtk jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```
