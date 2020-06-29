@@ -1,5 +1,7 @@
 # ipyvtk
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/ipyvtk/master)
+
 An ipywidget for vtkRenderWindow.
 
 This is an early prototype implemented from the work done by Andras Lasso under
