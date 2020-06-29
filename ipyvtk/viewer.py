@@ -34,8 +34,8 @@ class ViewInteractiveWidget(Canvas):
         self.last_render_time = 0
         self.quick_render_delay_sec = 0.1
         self.quick_render_delay_sec_range = [0.02, 2.0]
-        self.adaptiveRenderDelay = True
-        self.lastMouseMoveEvent = None
+        self.adaptive_render_delay = True
+        self.last_mouse_move_event = None
 
         # Quality vs performance
         self.compression_quality = 50
@@ -162,10 +162,10 @@ class ViewInteractiveWidget(Canvas):
             self.error = str(e)
 
     def send_pending_mouse_move_event(self):
-        if self.lastMouseMoveEvent is not None:
-            self.update_interactor_event_data(self.lastMouseMoveEvent)
+        if self.last_mouse_move_event is not None:
+            self.update_interactor_event_data(self.last_mouse_move_event)
             self.interactor.MouseMoveEvent()
-            self.lastMouseMoveEvent = None
+            self.last_mouse_move_event = None
 
     def quick_render(self):
         try:
@@ -209,10 +209,10 @@ class ViewInteractiveWidget(Canvas):
                 if self.message_timestamp_offset is None:
                     self.message_timestamp_offset = time.time() - \
                         event['timeStamp'] * 0.001
-                self.lastMouseMoveEvent = event
+                self.last_mouse_move_event = event
                 if not self.dragging and not self.track_mouse_move:
                     return
-                if self.adaptiveRenderDelay:
+                if self.adaptive_render_delay:
                     ageOfProcessedMessage = time.time(
                     ) - (event['timeStamp'] * 0.001 + self.message_timestamp_offset)
                     if ageOfProcessedMessage > 1.5 * self.quick_render_delay_sec:
@@ -234,12 +234,12 @@ class ViewInteractiveWidget(Canvas):
             elif event['event'] == 'mouseenter':
                 self.update_interactor_event_data(event)
                 self.interactor.EnterEvent()
-                self.lastMouseMoveEvent = None
+                self.last_mouse_move_event = None
                 self.quick_render_request_timer.start()
             elif event['event'] == 'mouseleave':
                 self.update_interactor_event_data(event)
                 self.interactor.LeaveEvent()
-                self.lastMouseMoveEvent = None
+                self.last_mouse_move_event = None
                 self.quick_render_request_timer.start()
             elif event['event'] == 'mousedown':
                 self.dragging = True
