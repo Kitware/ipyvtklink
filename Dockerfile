@@ -24,7 +24,7 @@ WORKDIR /root/ipyvtk
 
 RUN pip install .
 
-COPY start_xvfb.sh /sbin/start_xvfb.sh
+COPY start.sh /sbin/start_xvfb.sh
 RUN chmod a+x /sbin/start_xvfb.sh
 
 ENTRYPOINT ["tini", "-g", "--", "start_xvfb.sh"]
