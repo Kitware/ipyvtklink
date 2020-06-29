@@ -1,7 +1,16 @@
 FROM continuumio/miniconda3 AS conda
 SHELL ["/bin/bash", "-c"]
 
-USER root
+ARG NB_USER=jovyan
+ARG NB_UID=1000
+ENV USER ${NB_USER}
+ENV NB_UID ${NB_UID}
+ENV HOME /home/${NB_USER}
+
+RUN adduser --disabled-password \
+    --gecos "Default user" \
+    --uid ${NB_UID} \
+    ${NB_USER}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini && \
@@ -18,9 +27,9 @@ RUN conda install --quiet --yes -c conda-forge \
     matplotlib \
     scipy
 
-WORKDIR /root
+WORKDIR $HOME
 COPY . ./ipyvtk/
-WORKDIR /root/ipyvtk
+WORKDIR $HOME/ipyvtk
 
 RUN pip install .
 
