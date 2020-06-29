@@ -1,4 +1,4 @@
-# ipy-vtk
+# ipyvtk
 
 An ipywidget for vtkRenderWindow.
 
