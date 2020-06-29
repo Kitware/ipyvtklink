@@ -42,3 +42,11 @@ plotter.show()
 ```
 
 ![demo-2](demo-2.gif)
+
+
+## Run in Docker
+
+```
+docker build -t ipyvtk .
+docker run -p 8877:8877 ipyvtk
+```
