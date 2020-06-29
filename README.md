@@ -6,7 +6,7 @@ This is an early prototype implemented from the work done by Andras Lasso under
 an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py))
 
 
-Example use:
+Example use (currently this only works in Jupyter Notebook):
 
 ```py
 import pyvista as pv
@@ -22,3 +22,6 @@ plotter.add_mesh_clip_plane(mesh)
 
 ViewInteractiveWidget(plotter.ren_win)
 ```
+
+
+![demo](demo.gif)
