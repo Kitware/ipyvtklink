@@ -1,6 +1,4 @@
-pyvistaqt
 pyvista
-PyQt5
 ipycanvas
 ipyevents
 ipywidgets

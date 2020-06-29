@@ -8,13 +8,16 @@ Source:
 
 """
 from io import BytesIO
+from functools import wraps
+import threading
 
 from ipycanvas import Canvas
 from ipyevents import Event
 from ipywidgets import Image
 import numpy as np
 import PIL.Image
-import PyQt5.QtCore as qt
+import pyvista
+from pyvista.utilities import threaded
 
 from .utilities import screenshot
 
@@ -28,6 +31,7 @@ class ViewInteractiveWidget(Canvas):
         super().__init__(**kwargs)
 
         self.render_window = render_window
+        self.render_window.SetOffScreenRendering(1) # Force off screen
         self.transparent_background = transparent_background
 
         # Frame rate (1/renderDelay)
@@ -43,19 +47,6 @@ class ViewInteractiveWidget(Canvas):
         self.track_mouse_move = False
 
         self.message_timestamp_offset = None
-
-        # If not receiving new rendering request for 10ms then a render is requested
-        self.full_render_request_timer = qt.QTimer()
-        self.full_render_request_timer.setSingleShot(True)
-        self.full_render_request_timer.setInterval(500)
-        self.full_render_request_timer.timeout.connect(self.full_render)
-
-        # If not receiving new rendering request for 10ms then a render is requested
-        self.quick_render_request_timer = qt.QTimer()
-        self.quick_render_request_timer.setSingleShot(True)
-        self.quick_render_request_timer.setInterval(
-            self.quick_render_delay_sec * 1000)
-        self.quick_render_request_timer.timeout.connect(self.quick_render)
 
         # Get image size
         image = self.get_image()
@@ -136,11 +127,6 @@ class ViewInteractiveWidget(Canvas):
         elif delay_sec > self.quick_render_delay_sec_range[1]:
             delay_sec = self.quick_render_delay_sec_range[1]
         self.quick_render_delay_sec = delay_sec
-        self.quick_render_request_timer.setInterval(
-            self.quick_render_delay_sec * 1000)
-
-    def set_full_render_delay(self, delay_sec):
-        self.full_render_request_timer.setInterval(delay_sec)
 
     def get_image(self, compress=True, force_render=True):
         if force_render:
@@ -151,13 +137,11 @@ class ViewInteractiveWidget(Canvas):
         img.save(f, 'PNG')
         return Image(value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0])
 
+    @threaded
     def full_render(self):
         try:
             import time
-            self.full_render_request_timer.stop()
-            self.quick_render_request_timer.stop()
             self.draw_image(self.get_image(compress=False, force_render=True))
-            self.last_render_time = time.time()
         except Exception as e:
             self.error = str(e)
 
@@ -167,14 +151,12 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
+    @threaded
     def quick_render(self):
         try:
             import time
-            self.full_render_request_timer.stop()
-            self.quick_render_request_timer.stop()
             self.send_pending_mouse_move_event()
             self.draw_image(self.get_image(compress=True, force_render=False))
-            self.full_render_request_timer.start()
             if self.log_events:
                 self.elapsed_times.append(time.time() - self.last_render_time)
             self.last_render_time = time.time()
@@ -229,18 +211,14 @@ class ViewInteractiveWidget(Canvas):
                 # We need to render something now it no rendering since self.quick_render_delay_sec
                 if time.time() - self.last_render_time > self.quick_render_delay_sec:
                     self.quick_render()
-                else:
-                    self.quick_render_request_timer.start()
             elif event['event'] == 'mouseenter':
                 self.update_interactor_event_data(event)
                 self.interactor.EnterEvent()
                 self.last_mouse_move_event = None
-                self.quick_render_request_timer.start()
             elif event['event'] == 'mouseleave':
                 self.update_interactor_event_data(event)
                 self.interactor.LeaveEvent()
                 self.last_mouse_move_event = None
-                self.quick_render_request_timer.start()
             elif event['event'] == 'mousedown':
                 self.dragging = True
                 self.send_pending_mouse_move_event()
@@ -278,3 +256,22 @@ class ViewInteractiveWidget(Canvas):
                     self.full_render()
         except Exception as e:
             self.error = str(e)
+
+
+class iPlotter(pyvista.Plotter):
+    """Wrapping of PyVista's Plotter to be used interactively in Jupyter."""
+
+    def __init__(self, *args, **kwargs):
+        kwargs["notebook"] = False
+        kwargs["off_screen"] = False
+        pyvista.Plotter.__init__(self, *args, **kwargs)
+        self.ren_win.SetOffScreenRendering(1)
+        self.off_screen = True
+
+
+    @wraps(pyvista.Plotter.show)
+    def show(self, *args, **kwargs):
+        transparent_background = kwargs.pop('transparent_background', False)
+        kwargs["auto_close"] = False
+        _ = pyvista.Plotter.show(self, *args, **kwargs) # Incase the user sets the cpos or something
+        return ViewInteractiveWidget(self.ren_win, transparent_background=transparent_background)

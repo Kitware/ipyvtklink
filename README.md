@@ -10,25 +10,35 @@ The goal is to enable this widget to work with any server side
 `vtkRenderWindow` - this render window could be from VTK Python, ParaView, or
 PyVista.
 
-The current demo here uses PyVistaQt's `BackgroundPlotter` because it should be
-thread safe.
+The current demo here subclasses PyVista's `Plotter` to create a plotting API
+that can be imediately useable in Jupyter.
 
 Example use (currently this only works in Jupyter Notebook, not Lab):
 
 ```py
 import pyvista as pv
-import pyvistaqt as pvqt
 from pyvista import examples
 
-from ipyvtk.viewer import ViewInteractiveWidget
+from ipyvtk.viewer import iPlotter
 
 mesh = examples.download_st_helens().warp_by_scalar()
 
-plotter = pvqt.BackgroundPlotter()
+plotter = iPlotter()
 plotter.add_mesh_clip_plane(mesh)
-
-ViewInteractiveWidget(plotter.ren_win)
+plotter.show()
 ```
 
 
-![demo](demo.gif)
+![demo-1](demo-1.gif)
+
+
+```py
+volume = examples.download_knee_full()
+opacity = [0, 0, 0, 0.1, 0.3, 0.6, 1]
+
+plotter = iPlotter()
+plotter.add_volume(volume, opacity=opacity)
+plotter.show()
+```
+
+![demo-2](demo-2.gif)
