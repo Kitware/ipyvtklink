@@ -28,8 +28,8 @@ RUN conda install --quiet --yes -c conda-forge \
     scipy
 
 WORKDIR $HOME
-COPY . ./ipyvtk-simple/
-WORKDIR $HOME/ipyvtk-simple
+COPY . ./ipyvtk_simple/
+WORKDIR $HOME/ipyvtk_simple
 
 RUN pip install .
 

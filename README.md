@@ -1,11 +1,15 @@
-# ipyvtk-simple
+# ipyvtk_simple
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtk-simple/master)
 
-An ipywidget for vtkRenderWindow.
+*An ipywidget for vtkRenderWindow*
 
-This is an early prototype implemented from the work done by Andras Lasso under
-an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py))
+This is an early prototype of creating Jupyter interface to VTK. This toolkit
+is a proof of concept and a more polished tool with by available as
+[`ipyvtk`](https://github.com/Kitware/ipyvtk).
+
+The code here was implemented from the work done by Andras Lasso under
+an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py)).
 
 
 The goal is to enable this widget to work with any server side
@@ -49,6 +53,6 @@ plotter.show()
 ## Run in Docker
 
 ```
-docker build -t ipyvtk-simple .
-docker run -p 8877:8877 ipyvtk-simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+docker build -t ipyvtk_simple .
+docker run -p 8877:8877 ipyvtk_simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```
