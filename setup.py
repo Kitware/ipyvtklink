@@ -20,8 +20,9 @@ setup(
     long_description=io_open(readme_file, encoding="utf-8").read(),
     author='Bane Sullivan',
     author_email='bane.sullivan@kitware.com',
-    license='Apache 2.0',
+    license='BSD 3-Clause',
     classifiers=[
+        'License :: OSI Approved :: BSD 3-Clause License',
         'Development Status :: 4 - Beta',
         'Framework :: IPython',
         'Intended Audience :: Developers',
