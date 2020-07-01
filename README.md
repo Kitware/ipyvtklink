@@ -4,22 +4,19 @@
 
 *An ipywidget for vtkRenderWindow*
 
-This is an early prototype of creating Jupyter interface to VTK. This toolkit
-is a proof of concept and a more polished tool with by available as
-[`ipyvtk`](https://github.com/Kitware/ipyvtk).
+This is an early prototype of creating a Jupyter interface to VTK. This toolkit
+is a proof of concept and a more polished tool will be available as
+[`ipyvtk`](https://github.com/Kitware/ipyvtk) in the future.
 
-The code here was implemented from the work done by Andras Lasso under
-an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py)).
-
+The code here was implemented from the work done by [Andras Lasso](https://github.com/lassoan)
+under an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py)).
 
 The goal is to enable this widget to work with any server side
 `vtkRenderWindow` - this render window could be from VTK Python, ParaView, or
-PyVista.
+PyVista. The current demo here subclasses PyVista's `Plotter` to utilize its
+powerful and streamlined plotting API directly in a Jupyter environment.
 
-The current demo here subclasses PyVista's `Plotter` to create a plotting API
-that can be imediately useable in Jupyter.
-
-Example use (currently this only works in Jupyter Notebook, not Lab):
+Example use (currently this is only known to work in Jupyter Notebook, not Lab):
 
 ```py
 import pyvista as pv
