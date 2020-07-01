@@ -2,7 +2,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-package_name = 'ipyvtk'
+package_name = 'ipyvtk_simple'
 
 __version__ = None
 filepath = os.path.dirname(__file__)
@@ -24,7 +24,7 @@ setup(
         'Development Status :: 4 - Beta',
     ],
 
-    url='https://github.com/banesullivan/ipyvtk',
+    url='https://github.com/Kitware/ipyvtk-simple',
     keywords='vtk plotting pyvista jupyter',
     python_requires='>=3.5.*',
     install_requires=['pyvista',

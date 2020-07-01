@@ -1,6 +1,6 @@
-# ipyvtk
+# ipyvtk-simple
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/ipyvtk/master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtk-simple/master)
 
 An ipywidget for vtkRenderWindow.
 
@@ -21,7 +21,7 @@ Example use (currently this only works in Jupyter Notebook, not Lab):
 import pyvista as pv
 from pyvista import examples
 
-from ipyvtk.viewer import iPlotter
+from ipyvtk_simple.viewer import iPlotter
 
 mesh = examples.download_st_helens().warp_by_scalar()
 
@@ -49,6 +49,6 @@ plotter.show()
 ## Run in Docker
 
 ```
-docker build -t ipyvtk .
-docker run -p 8877:8877 ipyvtk jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+docker build -t ipyvtk-simple .
+docker run -p 8877:8877 ipyvtk-simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```

@@ -1,4 +1,4 @@
-"""Version info for ipyvtk."""
+"""Version info for ipyvtk-simple."""
 # major, minor, patch
 version_info = 0, 0, 1
 
