@@ -16,7 +16,6 @@ from ipyevents import Event
 from ipywidgets import Image
 import numpy as np
 import PIL.Image
-from pyvista.utilities import threaded
 
 from .constants import KEY_TO_SYM
 from .utilities import screenshot
@@ -103,7 +102,6 @@ class ViewInteractiveWidget(Canvas):
         img.save(f, 'PNG')
         return Image(value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0])
 
-    @threaded
     def full_render(self):
         try:
             import time
@@ -117,7 +115,6 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
-    @threaded
     def quick_render(self):
         try:
             import time
