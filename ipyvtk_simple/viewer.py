@@ -9,6 +9,7 @@ Source:
 """
 from io import BytesIO
 from functools import wraps
+import logging
 import threading
 
 from ipycanvas import Canvas
@@ -20,6 +21,11 @@ import pyvista
 from pyvista.utilities import threaded
 
 from .utilities import screenshot
+
+
+log = logging.getLogger(__name__)
+log.setLevel('CRITICAL')
+log.addHandler(logging.StreamHandler())
 
 
 class ViewInteractiveWidget(Canvas):
@@ -262,16 +268,22 @@ class iPlotter(pyvista.Plotter):
     """Wrapping of PyVista's Plotter to be used interactively in Jupyter."""
 
     def __init__(self, *args, **kwargs):
+        transparent_background = kwargs.pop('transparent_background', pyvista.rcParams['transparent_background'])
         kwargs["notebook"] = False
         kwargs["off_screen"] = False
         pyvista.Plotter.__init__(self, *args, **kwargs)
         self.ren_win.SetOffScreenRendering(1)
         self.off_screen = True
+        self._widget = ViewInteractiveWidget(self.ren_win, transparent_background=transparent_background)
 
 
     @wraps(pyvista.Plotter.show)
     def show(self, *args, **kwargs):
-        transparent_background = kwargs.pop('transparent_background', False)
         kwargs["auto_close"] = False
         _ = pyvista.Plotter.show(self, *args, **kwargs) # Incase the user sets the cpos or something
-        return ViewInteractiveWidget(self.ren_win, transparent_background=transparent_background)
+        return self.widget
+
+    @property
+    def widget(self):
+        self._widget.full_render()
+        return self._widget
