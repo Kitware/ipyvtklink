@@ -22,7 +22,7 @@ Example use (currently this is only known to work in Jupyter Notebook, not Lab):
 import pyvista as pv
 from pyvista import examples
 
-from ipyvtk_simple.viewer import iPlotter
+from ipyvtk_simple.plotter import iPlotter
 
 mesh = examples.download_st_helens().warp_by_scalar()
 
