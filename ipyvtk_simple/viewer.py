@@ -46,8 +46,6 @@ class ViewInteractiveWidget(Canvas):
         self.adaptive_render_delay = True
         self.last_mouse_move_event = None
 
-        # Quality vs performance
-        self.compression_quality = 50
         # refresh if mouse is just moving (not dragging)
         self.track_mouse_move = False
 
@@ -55,11 +53,10 @@ class ViewInteractiveWidget(Canvas):
 
         # Get image size
         image = self.get_image()
+        # Set Canvas size
         self.width = int(image.width)
         self.height = int(image.height)
         self.draw_image(image)
-
-        self.interactor = self.render_window.GetInteractor()
 
         self.dragging = False
 
@@ -85,6 +82,10 @@ class ViewInteractiveWidget(Canvas):
         self.logged_events = []
         self.elapsed_times = []
         self.age_of_processed_messages = []
+
+    @property
+    def interactor(self):
+        return self.render_window.GetInteractor()
 
     def set_quick_render_delay(self, delay_sec):
         if delay_sec < self.quick_render_delay_sec_range[0]:
