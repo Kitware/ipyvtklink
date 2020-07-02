@@ -12,11 +12,33 @@ The code here was implemented from the work done by [Andras Lasso](https://githu
 under an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py)).
 
 The goal is to enable this widget to work with any server side
-`vtkRenderWindow` - this render window could be from VTK Python, ParaView, or
-PyVista. The current demo here subclasses PyVista's `Plotter` to utilize its
-powerful and streamlined plotting API directly in a Jupyter environment.
+[`vtkRenderWindow`](https://vtk.org/doc/nightly/html/classvtkRenderWindow.html)
+This render window could be from [VTK Python](https://vtk.org/),
+[ParaView](https://www.paraview.org/), or [PyVista](https://www.pyvista.org/).
+The current demo here subclasses [PyVista's `Plotter`](https://docs.pyvista.org/plotting/plotting.html#plotter)
+to utilize its powerful and streamlined plotting API directly in a Jupyter
+environment.
 
-Example use (currently this is only known to work in Jupyter Notebook, not Lab):
+## Run in Docker
+
+To build and run in Docker:
+
+```
+docker build -t ipyvtk_simple .
+docker run -p 8877:8877 ipyvtk_simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+```
+
+
+## Examples
+
+You may have to build jupyter lab extensions for this to work in Lab. This is
+known to worl well in Notebook.
+
+
+### PyVista
+
+We have created a `iPlotter` class that wraps PyVista's `Plotter` for quick use
+of PyVista's plotting API:
 
 ```py
 import pyvista as pv
@@ -47,9 +69,39 @@ plotter.show()
 ![demo-2](demo-2.gif)
 
 
-## Run in Docker
+### Python VTK
 
+The widget here can be used with VTK. Here is a minimal example showing how
+to pass any `vtkRenderWindow` to the `ViewInteractiveWidget`:
+
+```py
+import vtk
+from ipyvtk_simple.viewer import ViewInteractiveWidget
+
+# Create some data
+cylinder = vtk.vtkCylinderSource()
+cylinder.SetResolution(8)
+mapper = vtk.vtkPolyDataMapper()
+mapper.SetInputConnection(cylinder.GetOutputPort())
+actor = vtk.vtkActor()
+actor.SetMapper(mapper)
+
+# Set up render window
+ren = vtk.vtkRenderer()
+ren_win = vtk.vtkRenderWindow()
+ren_win.SetOffScreenRendering(1)
+ren_win.AddRenderer(ren)
+iren = vtk.vtkRenderWindowInteractor()
+iren.SetRenderWindow(ren_win)
+style = vtk.vtkInteractorStyleTrackballCamera()
+iren.SetInteractorStyle(style)
+
+# Add actor to scene
+ren.AddActor(actor)
+ren.ResetCamera()
+
+# Display
+ViewInteractiveWidget(ren_win)
 ```
-docker build -t ipyvtk_simple .
-docker run -p 8877:8877 ipyvtk_simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
-```
+
+![demo-3](demo-3.gif)

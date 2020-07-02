@@ -18,6 +18,7 @@ import numpy as np
 import PIL.Image
 from pyvista.utilities import threaded
 
+from .constants import KEY_TO_SYM
 from .throttler import throttle
 from .utilities import screenshot
 
@@ -46,8 +47,6 @@ class ViewInteractiveWidget(Canvas):
         self.adaptive_render_delay = True
         self.last_mouse_move_event = None
 
-        # Quality vs performance
-        self.compression_quality = 50
         # refresh if mouse is just moving (not dragging)
         self.track_mouse_move = False
 
@@ -55,11 +54,10 @@ class ViewInteractiveWidget(Canvas):
 
         # Get image size
         image = self.get_image()
+        # Set Canvas size
         self.width = int(image.width)
         self.height = int(image.height)
         self.draw_image(image)
-
-        self.interactor = self.render_window.GetInteractor()
 
         self.dragging = False
 
@@ -76,46 +74,6 @@ class ViewInteractiveWidget(Canvas):
         self.interaction_events.prevent_default_action = True
         self.interaction_events.on_dom_event(self.handle_interaction_event)
 
-        self.key_to_sym = {
-            'ArrowLeft': 'Left',
-            'ArrowRight': 'Right',
-            'ArrowUp': 'Up',
-            'ArrowDown': 'Down',
-            'BackSpace': 'BackSpace',
-            'Tab': 'Tab',
-            'Enter': 'Return',
-            # 'Shift': 'Shift_L',
-            # 'Control': 'Control_L',
-            # 'Alt': 'Alt_L',
-            'CapsLock': 'Caps_Lock',
-            'Escape': 'Escape',
-            ' ': 'space',
-            'PageUp': 'Prior',
-            'PageDown': 'Next',
-            'Home': 'Home',
-            'End': 'End',
-            'Delete': 'Delete',
-            'Insert': 'Insert',
-            '*': 'asterisk',
-            '+': 'plus',
-            '|': 'bar',
-            '-': 'minus',
-            '.': 'period',
-            '/': 'slash',
-            'F1': 'F1',
-            'F2': 'F2',
-            'F3': 'F3',
-            'F4': 'F4',
-            'F5': 'F5',
-            'F6': 'F6',
-            'F7': 'F7',
-            'F8': 'F8',
-            'F9': 'F9',
-            'F10': 'F10',
-            'F11': 'F11',
-            'F12': 'F12'
-        }
-
         # Errors are not displayed when a widget is displayed,
         # this variable can be used to retrieve error messages
         self.error = None
@@ -125,6 +83,10 @@ class ViewInteractiveWidget(Canvas):
         self.logged_events = []
         self.elapsed_times = []
         self.age_of_processed_messages = []
+
+    @property
+    def interactor(self):
+        return self.render_window.GetInteractor()
 
     def set_quick_render_delay(self, delay_sec):
         if delay_sec < self.quick_render_delay_sec_range[0]:
@@ -173,7 +135,7 @@ class ViewInteractiveWidget(Canvas):
         try:
             if event['event'] == 'keydown' or event['event'] == 'keyup':
                 key = event['key']
-                sym = self.key_to_sym[key] if key in self.key_to_sym.keys(
+                sym = KEY_TO_SYM[key] if key in KEY_TO_SYM.keys(
                 ) else key
                 self.interactor.SetKeySym(sym)
                 if len(key) == 1:
