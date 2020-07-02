@@ -16,7 +16,6 @@ from ipyevents import Event
 from ipywidgets import Image
 import numpy as np
 import PIL.Image
-from pyvista.utilities import threaded
 
 from .constants import KEY_TO_SYM
 from .throttler import throttle
