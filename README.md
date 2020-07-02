@@ -12,9 +12,12 @@ The code here was implemented from the work done by [Andras Lasso](https://githu
 under an MIT License (see [the source](https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py)).
 
 The goal is to enable this widget to work with any server side
-`vtkRenderWindow` - this render window could be from VTK Python, ParaView, or
-PyVista. The current demo here subclasses PyVista's `Plotter` to utilize its
-powerful and streamlined plotting API directly in a Jupyter environment.
+[`vtkRenderWindow`](https://vtk.org/doc/nightly/html/classvtkRenderWindow.html)
+This render window could be from [VTK Python](https://vtk.org/),
+[ParaView](https://www.paraview.org/), or [PyVista](https://www.pyvista.org/).
+The current demo here subclasses [PyVista's `Plotter`](https://docs.pyvista.org/plotting/plotting.html#plotter)
+to utilize its powerful and streamlined plotting API directly in a Jupyter
+environment.
 
 ## Run in Docker
 
