@@ -18,6 +18,7 @@ import numpy as np
 import PIL.Image
 from pyvista.utilities import threaded
 
+from .throttler import throttle
 from .utilities import screenshot
 
 
@@ -141,7 +142,7 @@ class ViewInteractiveWidget(Canvas):
         img.save(f, 'PNG')
         return Image(value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0])
 
-    @threaded
+    @throttle(0.05)
     def full_render(self):
         try:
             import time
@@ -155,7 +156,7 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
-    @threaded
+    @throttle(0.02)
     def quick_render(self):
         try:
             import time
