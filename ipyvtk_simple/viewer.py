@@ -12,6 +12,7 @@ import logging
 import threading
 
 from ipycanvas import Canvas
+from ipyevents import Event
 from ipywidgets import Image
 import numpy as np
 import PIL.Image
