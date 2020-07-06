@@ -18,6 +18,7 @@ import numpy as np
 import PIL.Image
 
 from .constants import KEY_TO_SYM
+from .throttler import throttle
 from .utilities import screenshot
 
 
@@ -93,7 +94,7 @@ class ViewInteractiveWidget(Canvas):
             delay_sec = self.quick_render_delay_sec_range[1]
         self.quick_render_delay_sec = delay_sec
 
-    def get_image(self, compress=True, force_render=True):
+    def get_image(self, force_render=True):
         if force_render:
             self.render_window.Render()
         raw_img = np.uint8(screenshot(self.render_window, transparent_background=self.transparent_background))
@@ -102,10 +103,12 @@ class ViewInteractiveWidget(Canvas):
         img.save(f, 'PNG')
         return Image(value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0])
 
+    @throttle(0.1)
     def full_render(self):
         try:
             import time
-            self.draw_image(self.get_image(compress=False, force_render=True))
+            self.draw_image(self.get_image(force_render=True))
+            self.last_render_time = time.time()
         except Exception as e:
             self.error = str(e)
 
@@ -115,11 +118,12 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
+    @throttle(0.1)
     def quick_render(self):
         try:
             import time
             self.send_pending_mouse_move_event()
-            self.draw_image(self.get_image(compress=True, force_render=False))
+            self.draw_image(self.get_image(force_render=False))
             if self.log_events:
                 self.elapsed_times.append(time.time() - self.last_render_time)
             self.last_render_time = time.time()
