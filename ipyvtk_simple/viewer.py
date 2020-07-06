@@ -103,7 +103,7 @@ class ViewInteractiveWidget(Canvas):
         img.save(f, 'PNG')
         return Image(value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0])
 
-    @throttle(0.05)
+    @throttle(0.1)
     def full_render(self):
         try:
             import time
@@ -118,7 +118,7 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
-    @throttle(0.02)
+    @throttle(0.1)
     def quick_render(self):
         try:
             import time
