@@ -61,6 +61,10 @@ class ViewInteractiveWidget(Canvas):
         self.dragging = False
 
         self.interaction_events = Event()
+        # Set the throttle or debounce time in millseconds (must be an non-negative integer)
+        # See https://github.com/mwcraig/ipyevents/pull/55
+        self.interaction_events.throttle_or_debounce = 'throttle'
+        self.interaction_events.wait = 100
         self.interaction_events.source = self
         self.interaction_events.watched_events = [
             'dragstart', 'mouseenter', 'mouseleave',
