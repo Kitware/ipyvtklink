@@ -19,13 +19,15 @@ RUN apt-get update && \
 RUN conda install --quiet --yes -c conda-forge \
     ipywidgets \
     ipycanvas \
-    ipyevents \
     jupyter \
     ipython \
     pillow \
     pyvista \
     matplotlib \
     scipy
+
+# This version isn't on conda-forge yet
+RUN pip install 'ipyevents>=0.8.0'
 
 WORKDIR $HOME
 COPY . ./ipyvtk_simple/

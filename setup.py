@@ -40,7 +40,7 @@ setup(
     python_requires='>=3.5.*',
     install_requires=['pyvista',
                       'ipycanvas',
-                      'ipyevents',
+                      'ipyevents>=0.8.0',
                       'ipywidgets',
     ],
 
