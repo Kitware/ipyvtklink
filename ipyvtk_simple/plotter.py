@@ -40,3 +40,8 @@ class iPlotter(Plotter):
     def widget(self):
         self._widget.full_render()
         return self._widget
+
+    @wraps(Plotter.close)
+    def close(self, *args, **kwargs):
+        del self._widget
+        return Plotter.close(self, *args, **kwargs)
