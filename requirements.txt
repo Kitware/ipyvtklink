@@ -1,4 +1,4 @@
 pyvista
 ipycanvas
-ipyevents
+ipyevents>=0.8.0
 ipywidgets
