@@ -116,3 +116,33 @@ ViewInteractiveWidget(ren_win)
 ```
 
 ![demo-3](demo-3.gif)
+
+
+### ParaView Python
+
+See instructions above for running ParaView in a Docker container.
+
+```py
+import paraview.simple as pvs
+from ipyvtk_simple.viewer import ViewInteractiveWidget
+
+# Create data on the pipeline
+wavelet = pvs.Wavelet()
+contour = pvs.Contour(Input=wavelet)
+contour.ContourBy = ['POINTS', 'RTData']
+contour.Isosurfaces = [63, 143, 170, 197, 276]
+
+# Set the data as visible
+pvs.Show(contour)
+
+# Fetch the view and render the scene
+view = pvs.GetActiveView()
+pvs.Render(view)
+
+# Fetch the RenderWindow
+ren_win = view.GetClientSideObject().GetRenderWindow()
+# Display the RenderWindow with the widget
+ViewInteractiveWidget(ren_win)
+```
+
+![demo-4](demo-4.gif)
