@@ -65,7 +65,7 @@ plotter.show()
 ```
 
 
-![demo-1](https://github.com/Kitware/ipyvtk_simple/raw/master/assets/demo-1.gif)
+![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-1.gif)
 
 
 ```py
@@ -77,7 +77,7 @@ plotter.add_volume(volume, opacity=opacity)
 plotter.show()
 ```
 
-![demo-2](https://github.com/Kitware/ipyvtk_simple/raw/master/assets/demo-2.gif)
+![demo-2](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-2.gif)
 
 
 ### Python VTK
@@ -115,7 +115,7 @@ ren.ResetCamera()
 ViewInteractiveWidget(ren_win)
 ```
 
-![demo-3](https://github.com/Kitware/ipyvtk_simple/raw/master/assets/demo-3.gif)
+![demo-3](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-3.gif)
 
 
 ### ParaView Python
@@ -145,4 +145,4 @@ ren_win = view.GetClientSideObject().GetRenderWindow()
 ViewInteractiveWidget(ren_win)
 ```
 
-![demo-4](https://github.com/Kitware/ipyvtk_simple/raw/master/assets/demo-4.gif)
+![demo-4](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-4.gif)
