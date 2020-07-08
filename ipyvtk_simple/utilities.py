@@ -1,6 +1,7 @@
 import vtk
 import vtk.util.numpy_support as nps
 
+
 def screenshot(render_window, transparent_background=False):
     """Helper to fetch screenshot of render window."""
     ifilter = vtk.vtkWindowToImageFilter()
@@ -14,7 +15,7 @@ def screenshot(render_window, transparent_background=False):
     ifilter.Update()
     image = ifilter.GetOutput()
     img_size = image.GetDimensions()
-    vtkarr = image.GetPointData().GetAbstractArray('ImageScalars')
+    vtkarr = image.GetPointData().GetAbstractArray("ImageScalars")
     img_array = nps.vtk_to_numpy(vtkarr)
     # Reshape and write
     tgt_size = (img_size[1], img_size[0], -1)

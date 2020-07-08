@@ -15,20 +15,25 @@ class iPlotter(Plotter):
 
     def __init__(self, *args, **kwargs):
         if pyvista is None:
-            raise ImportError('Please install PyVista to use this.')
-        transparent_background = kwargs.pop('transparent_background', pyvista.rcParams['transparent_background'])
+            raise ImportError("Please install PyVista to use this.")
+        transparent_background = kwargs.pop(
+            "transparent_background", pyvista.rcParams["transparent_background"]
+        )
         kwargs["notebook"] = False
         kwargs["off_screen"] = False
         Plotter.__init__(self, *args, **kwargs)
         self.ren_win.SetOffScreenRendering(1)
         self.off_screen = True
-        self._widget = ViewInteractiveWidget(self.ren_win, transparent_background=transparent_background)
-
+        self._widget = ViewInteractiveWidget(
+            self.ren_win, transparent_background=transparent_background
+        )
 
     @wraps(Plotter.show)
     def show(self, *args, **kwargs):
         kwargs["auto_close"] = False
-        _ = Plotter.show(self, *args, **kwargs) # Incase the user sets the cpos or something
+        _ = Plotter.show(
+            self, *args, **kwargs
+        )  # Incase the user sets the cpos or something
         return self.widget
 
     @property
