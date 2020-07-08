@@ -28,6 +28,17 @@ docker build -t ipyvtk_simple .
 docker run -p 8877:8877 ipyvtk_simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```
 
+and open the `demo.ipynb` notebook.
+
+Additionally, this can be used with ParaView. An example is given in
+`paraview.ipynb` which can be run via:
+
+```
+docker build -t ipyvtk_pv -f paraview.dockerfile .
+docker run -p 8877:8877 ipyvtk_pv jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+```
+
+and open the `paraview.ipynb` notebook.
 
 ## Examples
 
