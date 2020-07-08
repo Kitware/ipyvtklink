@@ -37,3 +37,6 @@ KEY_TO_SYM = {
     'F11': 'F11',
     'F12': 'F12'
 }
+
+
+INTERACTION_THROTTLE = 100
