@@ -45,7 +45,8 @@ known to worl well in Notebook.
 
 ### PyVista
 
-PyVista is working ti implement this in [this pull request](https://github.com/pyvista/pyvista/pull/824)
+PyVista is working to implement this in [a pull request](https://github.com/pyvista/pyvista/pull/824).
+See the `pyvista.ipynb` for a proff of concept.
 
 
 ![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-1.gif)
