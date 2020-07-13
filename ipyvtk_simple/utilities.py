@@ -1,9 +1,12 @@
-import vtk
-import vtk.util.numpy_support as nps
+"""Helper methods."""
 
 
 def screenshot(render_window, transparent_background=False):
     """Helper to fetch screenshot of render window."""
+    # Dynamic vtk import so we do not have to list vtk as a requirement
+    #    this makes installing with ParaView very easy!
+    import vtk
+    import vtk.util.numpy_support as nps
     ifilter = vtk.vtkWindowToImageFilter()
     ifilter.SetInput(render_window)
     ifilter.ReadFrontBufferOff()
