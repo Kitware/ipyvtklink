@@ -16,6 +16,11 @@ The goal is to enable this widget to work with any server side
 This render window could be from [VTK Python](https://vtk.org/),
 [ParaView](https://www.paraview.org/), or [PyVista](https://www.pyvista.org/).
 
+Please note that `vtk` is not listed as a requirement for this package to
+simply its installation in virtual environments where vtk may be built from
+source or bundled with ParaView and we do not want to install the wheels from
+PyPI.
+
 ## Run in Docker
 
 To build and run in Docker:
@@ -25,7 +30,7 @@ docker build -t ipyvtk_simple .
 docker run -p 8877:8877 ipyvtk_simple jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```
 
-and open the `demo.ipynb` notebook.
+and open the `pyvista.ipynb` notebook.
 
 Additionally, this can be used with ParaView. An example is given in
 `paraview.ipynb` which can be run via:
@@ -40,13 +45,13 @@ and open the `paraview.ipynb` notebook.
 ## Examples
 
 You may have to build jupyter lab extensions for this to work in Lab. This is
-known to worl well in Notebook.
+known to work well in Notebook.
 
 
 ### PyVista
 
 PyVista is working to implement this in [a pull request](https://github.com/pyvista/pyvista/pull/824).
-See the `pyvista.ipynb` for a proff of concept.
+See the `pyvista.ipynb` for a proof of concept.
 
 
 ![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-1.gif)
