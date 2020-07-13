@@ -18,6 +18,7 @@ setup(
     version=__version__,
     description="ipywidget for vtkRenderWindow",
     long_description=io_open(readme_file, encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
     author="Bane Sullivan",
     author_email="bane.sullivan@kitware.com",
     license="BSD 3-Clause",
