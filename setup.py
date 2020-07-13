@@ -22,7 +22,7 @@ setup(
     author_email="bane.sullivan@kitware.com",
     license="BSD 3-Clause",
     classifiers=[
-        "License :: OSI Approved :: BSD 3-Clause License",
+        "License :: OSI Approved :: BSD License",
         "Development Status :: 4 - Beta",
         "Framework :: IPython",
         "Intended Audience :: Developers",
