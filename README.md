@@ -1,7 +1,7 @@
 # ipyvtk_simple
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtk-simple/master)
-[![PyPI](https://img.shields.io/pypi/v/pyvista.svg?logo=python&logoColor=white)](https://pypi.org/project/pyvista/)
+[![PyPI](https://img.shields.io/pypi/v/ipyvtk_simple.svg?logo=python&logoColor=white)](https://pypi.org/project/ipyvtk_simple/)
 
 *An ipywidget for vtkRenderWindow*
 
