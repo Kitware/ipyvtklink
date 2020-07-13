@@ -15,9 +15,6 @@ The goal is to enable this widget to work with any server side
 [`vtkRenderWindow`](https://vtk.org/doc/nightly/html/classvtkRenderWindow.html)
 This render window could be from [VTK Python](https://vtk.org/),
 [ParaView](https://www.paraview.org/), or [PyVista](https://www.pyvista.org/).
-The current demo here subclasses [PyVista's `Plotter`](https://docs.pyvista.org/plotting/plotting.html#plotter)
-to utilize its powerful and streamlined plotting API directly in a Jupyter
-environment.
 
 ## Run in Docker
 
@@ -48,34 +45,10 @@ known to worl well in Notebook.
 
 ### PyVista
 
-We have created a `iPlotter` class that wraps PyVista's `Plotter` for quick use
-of PyVista's plotting API:
-
-```py
-import pyvista as pv
-from pyvista import examples
-
-from ipyvtk_simple.plotter import iPlotter
-
-mesh = examples.download_st_helens().warp_by_scalar()
-
-plotter = iPlotter()
-plotter.add_mesh_clip_plane(mesh)
-plotter.show()
-```
+PyVista is working ti implement this in [this pull request](https://github.com/pyvista/pyvista/pull/824)
 
 
 ![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-1.gif)
-
-
-```py
-volume = examples.download_knee_full()
-opacity = [0, 0, 0, 0.1, 0.3, 0.6, 1]
-
-plotter = iPlotter()
-plotter.add_volume(volume, opacity=opacity)
-plotter.show()
-```
 
 ![demo-2](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-2.gif)
 

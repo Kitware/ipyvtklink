@@ -35,7 +35,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     url="https://github.com/Kitware/ipyvtk-simple",
-    keywords="vtk plotting pyvista jupyter",
+    keywords="vtk plotting jupyter",
     python_requires=">=3.5.*",
-    install_requires=["pyvista", "ipycanvas", "ipyevents>=0.8.0", "ipywidgets",],
+    install_requires=["ipycanvas", "ipyevents>=0.8.0", "ipywidgets",],
 )
