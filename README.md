@@ -2,6 +2,7 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtk-simple/master)
 [![PyPI](https://img.shields.io/pypi/v/ipyvtk_simple.svg?logo=python&logoColor=white)](https://pypi.org/project/ipyvtk_simple/)
+![CI Status](https://github.com/Kitware/ipyvtk-simple/workflows/Upload%20Python%20Package/badge.svg?branch=master)
 
 *An ipywidget for vtkRenderWindow*
 
