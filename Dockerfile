@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 RUN conda install --quiet --yes -c conda-forge \
     ipywidgets \
-    ipycanvas \
+    ipycanvas>=0.5.0 \
     jupyter \
     ipython \
     pillow \

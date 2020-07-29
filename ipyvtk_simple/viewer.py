@@ -9,7 +9,6 @@ Source:
 """
 from io import BytesIO
 import logging
-import threading
 
 from ipycanvas import Canvas
 from ipyevents import Event
@@ -52,6 +51,9 @@ class ViewInteractiveWidget(Canvas):
         self.track_mouse_move = False
 
         self.message_timestamp_offset = None
+
+        self.layout.width = '100%'
+        self.layout.height = 'auto'
 
         # Get image size
         image = self.get_image()
