@@ -117,7 +117,7 @@ class ViewInteractiveWidget(Canvas):
         )
         f = BytesIO()
         img = PIL.Image.fromarray(raw_img)
-        img.save(f, "PNG")
+        img.save(f, "JPEG")
         return Image(
             value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0]
         )
