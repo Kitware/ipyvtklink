@@ -18,7 +18,7 @@ This render window could be from [VTK Python](https://vtk.org/),
 [ParaView](https://www.paraview.org/), or [PyVista](https://www.pyvista.org/).
 
 Please note that `vtk` is not listed as a requirement for this package to
-simply its installation in virtual environments where vtk may be built from
+simplify its installation in virtual environments where VTK may be built from
 source or bundled with ParaView and we do not want to install the wheels from
 PyPI.
 
