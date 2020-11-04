@@ -9,6 +9,7 @@ Source:
 """
 import time
 import logging
+import weakref
 
 from ipycanvas import Canvas
 from ipyevents import Event
@@ -32,7 +33,7 @@ class ViewInteractiveWidget(Canvas):
 
         super().__init__(**kwargs)
 
-        self.render_window = render_window
+        self._render_window = weakref.ref(render_window)
         self.render_window.SetOffScreenRendering(1)  # Force off screen
         self.transparent_background = transparent_background
 
@@ -104,6 +105,14 @@ class ViewInteractiveWidget(Canvas):
         self.logged_events = []
         self.elapsed_times = []
         self.age_of_processed_messages = []
+
+    @property
+    def render_window(self):
+        """reference the weak reference"""
+        ren_win = self._render_window()
+        if ren_win is None:
+            raise RuntimeError('VTK render window has closed')
+        return ren_win
 
     @property
     def interactor(self):
