@@ -13,7 +13,6 @@ import logging
 from ipycanvas import Canvas
 from ipyevents import Event
 import numpy as np
-import PIL.Image
 
 from .constants import INTERACTION_THROTTLE, KEY_TO_SYM
 from .throttler import throttle
