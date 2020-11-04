@@ -28,14 +28,24 @@ log.addHandler(logging.StreamHandler())
 
 
 class ViewInteractiveWidget(Canvas):
-    """Remote controller for VTK render windows."""
+    """Remote controller for VTK render windows.
+
+    Parameters
+    ----------
+    quality : float
+        Compression quality.  100 for best quality, 0 for min quality.
+        Default 75.
+    """
 
     def __init__(self, render_window, log_events=True,
-                 transparent_background=False, allow_wheel=True, **kwargs):
+                 transparent_background=False, allow_wheel=True, quality=75,
+                 **kwargs):
         """Accepts a vtkRenderWindow."""
 
         super().__init__(**kwargs)
-
+        if quality < 0 or quality > 100:
+            raise ValueError('`quality` parameter must be between 0 and 100')
+        self._quality = quality
         self._render_window = weakref.ref(render_window)
         self.render_window.SetOffScreenRendering(1)  # Force off screen
         self.transparent_background = transparent_background
@@ -132,7 +142,7 @@ class ViewInteractiveWidget(Canvas):
         """Updates the canvas with the current render"""
         raw_img = self.get_image(force_render=force_render)
         f = BytesIO()
-        PIL.Image.fromarray(raw_img).save(f, 'JPEG')
+        PIL.Image.fromarray(raw_img).save(f, 'JPEG', quality=self._quality)
         image = Image(
             value=f.getvalue(), width=self.width, height=self.height
         )
