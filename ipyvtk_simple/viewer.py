@@ -10,10 +10,13 @@ Source:
 import time
 import logging
 import weakref
+from io import BytesIO
+import PIL.Image
 
 from ipycanvas import Canvas
 from ipyevents import Event
 import numpy as np
+from ipywidgets import Image
 
 from .constants import INTERACTION_THROTTLE, KEY_TO_SYM
 from .throttler import throttle
@@ -125,10 +128,15 @@ class ViewInteractiveWidget(Canvas):
             delay_sec = self.quick_render_delay_sec_range[1]
         self.quick_render_delay_sec = delay_sec
 
-    def update_canvas():
+    def update_canvas(self, force_render=True):
         """Updates the canvas with the current render"""
-        self.put_image_data(self.get_image(force_render=True))
-
+        raw_img = self.get_image(force_render=force_render)
+        f = BytesIO()
+        PIL.Image.fromarray(raw_img).save(f, 'png')
+        image = Image(
+            value=f.getvalue(), width=self.width, height=self.height
+        )
+        self.draw_image(image)
 
     def get_image(self, force_render=True):
         if force_render:
@@ -155,7 +163,7 @@ class ViewInteractiveWidget(Canvas):
         try:
             import time
             tstart = time.time()
-            self.put_image_data(self.get_image(force_render=True))
+            self.update_canvas(True)
             self.last_render_time = time.time()
             log.debug('full render in %.5f seconds', time.time() - tstart)
         except Exception as e:
@@ -171,7 +179,7 @@ class ViewInteractiveWidget(Canvas):
     def quick_render(self):
         try:
             self.send_pending_mouse_move_event()
-            self.put_image_data(self.get_image(force_render=False))
+            self.update_canvas()
             if self.log_events:
                 self.elapsed_times.append(time.time() - self.last_render_time)
             self.last_render_time = time.time()
@@ -248,6 +256,8 @@ class ViewInteractiveWidget(Canvas):
                 self.update_interactor_event_data(event)
                 self.interactor.LeaveEvent()
                 self.last_mouse_move_event = None
+                # if self.dragging:
+                    # self.dragging = False
             elif event_name == "mousedown":
                 self.dragging = True
                 self.send_pending_mouse_move_event()
@@ -258,7 +268,7 @@ class ViewInteractiveWidget(Canvas):
                     self.interactor.RightButtonPressEvent()
                 elif event["button"] == 1:
                     self.interactor.MiddleButtonPressEvent()
-                self.full_render()
+                self.full_render()  # does this have to be rendered?
             elif event_name == "mouseup":
                 self.send_pending_mouse_move_event()
                 self.update_interactor_event_data(event)
