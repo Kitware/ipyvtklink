@@ -7,18 +7,16 @@ Source:
     https://github.com/Slicer/SlicerJupyter/blob/master/JupyterNotebooks/JupyterNotebooksLib/interactive_view_widget.py
 
 """
-from io import BytesIO
+import time
 import logging
+import weakref
 
 from ipycanvas import Canvas
 from ipyevents import Event
-from ipywidgets import Image
 import numpy as np
-import PIL.Image
 
 from .constants import INTERACTION_THROTTLE, KEY_TO_SYM
 from .throttler import throttle
-from .utilities import screenshot
 
 
 log = logging.getLogger(__name__)
@@ -29,20 +27,19 @@ log.addHandler(logging.StreamHandler())
 class ViewInteractiveWidget(Canvas):
     """Remote controller for VTK render windows."""
 
-    def __init__(
-        self, render_window, log_events=False, transparent_background=False, **kwargs
-    ):
+    def __init__(self, render_window, log_events=True,
+                 transparent_background=False, allow_wheel=True, **kwargs):
         """Accepts a vtkRenderWindow."""
 
         super().__init__(**kwargs)
 
-        self.render_window = render_window
+        self._render_window = weakref.ref(render_window)
         self.render_window.SetOffScreenRendering(1)  # Force off screen
         self.transparent_background = transparent_background
 
         # Frame rate (1/renderDelay)
         self.last_render_time = 0
-        self.quick_render_delay_sec = 0.1
+        self.quick_render_delay_sec = 0.01
         self.quick_render_delay_sec_range = [0.02, 2.0]
         self.adaptive_render_delay = True
         self.last_mouse_move_event = None
@@ -55,12 +52,17 @@ class ViewInteractiveWidget(Canvas):
         self.layout.width = '100%'
         self.layout.height = 'auto'
 
-        # Get image size
-        image = self.get_image()
-        # Set Canvas size
-        self.width = int(image.width)
-        self.height = int(image.height)
-        self.draw_image(image)
+        # Set Canvas size from window size
+        self.width, self.height = self.render_window.GetSize()
+
+        # record first render time
+        tstart = time.time()
+        self.put_image_data(self.get_image(force_render=True))
+        self._first_render_time = time.time() - tstart
+        log.debug('First image in %.5f seconds', self._first_render_time)
+
+        # this is the minimum time to render anyway
+        self.set_quick_render_delay(self._first_render_time)
 
         self.dragging = False
 
@@ -70,18 +72,26 @@ class ViewInteractiveWidget(Canvas):
         self.interaction_events.throttle_or_debounce = "throttle"
         self.interaction_events.wait = INTERACTION_THROTTLE
         self.interaction_events.source = self
-        self.interaction_events.watched_events = [
+
+        allowed_events = [
             "dragstart",
             "mouseenter",
             "mouseleave",
             "mousedown",
             "mouseup",
             "mousemove",
-            # 'wheel',  # commented out so that user can scroll through the notebook using mousewheel
             "keyup",
             "keydown",
             "contextmenu",  # prevent context menu from appearing on right-click
         ]
+
+        # May be disabled out so that user can scroll through the
+        # notebook using mousewheel
+        if allow_wheel:
+            allowed_events.append("wheel")
+
+        self.interaction_events.watched_events = allowed_events
+
         # self.interaction_events.msg_throttle = 1  # does not seem to have effect
         self.interaction_events.prevent_default_action = True
         self.interaction_events.on_dom_event(self.handle_interaction_event)
@@ -97,6 +107,14 @@ class ViewInteractiveWidget(Canvas):
         self.age_of_processed_messages = []
 
     @property
+    def render_window(self):
+        """reference the weak reference"""
+        ren_win = self._render_window()
+        if ren_win is None:
+            raise RuntimeError('VTK render window has closed')
+        return ren_win
+
+    @property
     def interactor(self):
         return self.render_window.GetInteractor()
 
@@ -110,25 +128,31 @@ class ViewInteractiveWidget(Canvas):
     def get_image(self, force_render=True):
         if force_render:
             self.render_window.Render()
-        raw_img = np.uint8(
-            screenshot(
-                self.render_window, transparent_background=self.transparent_background
-            )
-        )
-        f = BytesIO()
-        img = PIL.Image.fromarray(raw_img)
-        img.save(f, "JPEG")
-        return Image(
-            value=f.getvalue(), width=raw_img.shape[1], height=raw_img.shape[0]
-        )
+        return self._fast_image
+
+    @property
+    def _fast_image(self):
+        import vtk.util.numpy_support as nps
+        import vtk
+        arr = vtk.vtkUnsignedCharArray()
+        self.render_window.GetRGBACharPixelData(0, 0, self.width - 1,
+                                                self.height - 1, 0, arr)
+
+        data = nps.vtk_to_numpy(arr).reshape(self.height, self.width, -1)[::-1]
+
+        if self.transparent_background:
+            return data
+        else:  # ignore alpha channel
+            return data[:, :, :-1]
 
     @throttle(0.1)
     def full_render(self):
         try:
             import time
-
-            self.draw_image(self.get_image(force_render=True))
+            tstart = time.time()
+            self.put_image_data(self.get_image(force_render=True))
             self.last_render_time = time.time()
+            log.debug('full render in %.5f seconds', time.time() - tstart)
         except Exception as e:
             self.error = str(e)
 
@@ -138,13 +162,11 @@ class ViewInteractiveWidget(Canvas):
             self.interactor.MouseMoveEvent()
             self.last_mouse_move_event = None
 
-    @throttle(0.1)
+    @throttle(0.01)
     def quick_render(self):
         try:
-            import time
-
             self.send_pending_mouse_move_event()
-            self.draw_image(self.get_image(force_render=False))
+            self.put_image_data(self.get_image(force_render=False))
             if self.log_events:
                 self.elapsed_times.append(time.time() - self.last_render_time)
             self.last_render_time = time.time()
@@ -161,8 +183,8 @@ class ViewInteractiveWidget(Canvas):
                     self.interactor.SetKeyCode(key)
                 self.interactor.SetRepeatCount(1)
             else:
-                self.interactor.SetEventPosition(
-                    event["offsetX"], self.height - event["offsetY"]
+                self.interactor.SetEventPosition(event["offsetX"],
+                                                 self.height - event["offsetY"]
                 )
             self.interactor.SetShiftKey(event["shiftKey"])
             self.interactor.SetControlKey(event["ctrlKey"])
@@ -171,16 +193,27 @@ class ViewInteractiveWidget(Canvas):
             self.error = str(e)
 
     def handle_interaction_event(self, event):
+        event_name = event["event"]
+
+        # we have to scale the mouse movement here relative to the
+        # canvas size, otherwise mouse movement won't correspond to
+        # the render window.
+        if 'offsetX' in event:
+            scale_x = self.width/event['boundingRectWidth']
+            event['offsetX'] = round(event['offsetX']*scale_x)
+            scale_y = self.height/event['boundingRectHeight']
+            event['offsetY'] = round(event['offsetY']*scale_y)
+
         try:
             if self.log_events:
                 self.logged_events.append(event)
-            if event["event"] == "mousemove":
-                import time
+            if event_name == "mousemove":
 
                 if self.message_timestamp_offset is None:
                     self.message_timestamp_offset = (
                         time.time() - event["timeStamp"] * 0.001
                     )
+
                 self.last_mouse_move_event = event
                 if not self.dragging and not self.track_mouse_move:
                     return
@@ -198,18 +231,19 @@ class ViewInteractiveWidget(Canvas):
                         self.age_of_processed_messages.append(
                             [ageOfProcessedMessage, self.quick_render_delay_sec]
                         )
-                # We need to render something now it no rendering since self.quick_render_delay_sec
+                # We need to render something now it no rendering
+                # since self.quick_render_delay_sec
                 if time.time() - self.last_render_time > self.quick_render_delay_sec:
                     self.quick_render()
-            elif event["event"] == "mouseenter":
+            elif event_name == "mouseenter":
                 self.update_interactor_event_data(event)
                 self.interactor.EnterEvent()
                 self.last_mouse_move_event = None
-            elif event["event"] == "mouseleave":
+            elif event_name == "mouseleave":
                 self.update_interactor_event_data(event)
                 self.interactor.LeaveEvent()
                 self.last_mouse_move_event = None
-            elif event["event"] == "mousedown":
+            elif event_name == "mousedown":
                 self.dragging = True
                 self.send_pending_mouse_move_event()
                 self.update_interactor_event_data(event)
@@ -220,7 +254,7 @@ class ViewInteractiveWidget(Canvas):
                 elif event["button"] == 1:
                     self.interactor.MiddleButtonPressEvent()
                 self.full_render()
-            elif event["event"] == "mouseup":
+            elif event_name == "mouseup":
                 self.send_pending_mouse_move_event()
                 self.update_interactor_event_data(event)
                 if event["button"] == 0:
@@ -231,7 +265,7 @@ class ViewInteractiveWidget(Canvas):
                     self.interactor.MiddleButtonReleaseEvent()
                 self.dragging = False
                 self.full_render()
-            elif event["event"] == "keydown":
+            elif event_name == "keydown":
                 self.send_pending_mouse_move_event()
                 self.update_interactor_event_data(event)
                 self.interactor.KeyPressEvent()
@@ -242,7 +276,7 @@ class ViewInteractiveWidget(Canvas):
                     and event["key"] != "Alt"
                 ):
                     self.full_render()
-            elif event["event"] == "keyup":
+            elif event_name == "keyup":
                 self.send_pending_mouse_move_event()
                 self.update_interactor_event_data(event)
                 self.interactor.KeyReleaseEvent()
@@ -252,5 +286,15 @@ class ViewInteractiveWidget(Canvas):
                     and event["key"] != "Alt"
                 ):
                     self.full_render()
+            elif event_name == 'wheel':
+                if 'wheel' in self.interaction_events.watched_events:
+                    self.send_pending_mouse_move_event()
+                    self.update_interactor_event_data(event)
+                    if event['deltaY'] < 0:
+                        self.interactor.MouseWheelForwardEvent()
+                    else:
+                        self.interactor.MouseWheelBackwardEvent()
+                    self.full_render()
+
         except Exception as e:
             self.error = str(e)
