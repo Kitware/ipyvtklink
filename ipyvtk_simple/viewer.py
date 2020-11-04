@@ -38,7 +38,7 @@ class ViewInteractiveWidget(Canvas):
     """
 
     def __init__(self, render_window, log_events=True,
-                 transparent_background=False, allow_wheel=True, quality=75,
+                 transparent_background=False, allow_wheel=True, quality=85,
                  **kwargs):
         """Accepts a vtkRenderWindow."""
 
