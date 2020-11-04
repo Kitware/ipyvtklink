@@ -132,7 +132,7 @@ class ViewInteractiveWidget(Canvas):
         """Updates the canvas with the current render"""
         raw_img = self.get_image(force_render=force_render)
         f = BytesIO()
-        PIL.Image.fromarray(raw_img).save(f, 'png')
+        PIL.Image.fromarray(raw_img).save(f, 'JPEG')
         image = Image(
             value=f.getvalue(), width=self.width, height=self.height
         )
@@ -256,8 +256,10 @@ class ViewInteractiveWidget(Canvas):
                 self.update_interactor_event_data(event)
                 self.interactor.LeaveEvent()
                 self.last_mouse_move_event = None
-                # if self.dragging:
-                    # self.dragging = False
+                if self.dragging:  # have to trigger a leave event and release event
+                    self.interactor.LeftButtonReleaseEvent()
+                    self.dragging = False
+                self.full_render()
             elif event_name == "mousedown":
                 self.dragging = True
                 self.send_pending_mouse_move_event()
