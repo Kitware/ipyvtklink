@@ -8,18 +8,15 @@ Source:
 
 """
 import time
-from io import BytesIO
 import logging
 
 from ipycanvas import Canvas
 from ipyevents import Event
-from ipywidgets import Image
 import numpy as np
 import PIL.Image
 
 from .constants import INTERACTION_THROTTLE, KEY_TO_SYM
 from .throttler import throttle
-from .utilities import screenshot
 
 
 log = logging.getLogger(__name__)
@@ -43,7 +40,7 @@ class ViewInteractiveWidget(Canvas):
         # Frame rate (1/renderDelay)
         self.last_render_time = 0
         self.quick_render_delay_sec = 0.01
-        self.quick_render_delay_sec_range = [0.002, 2.0]
+        self.quick_render_delay_sec_range = [0.02, 2.0]
         self.adaptive_render_delay = True
         self.last_mouse_move_event = None
 
@@ -123,7 +120,6 @@ class ViewInteractiveWidget(Canvas):
     def get_image(self, force_render=True):
         if force_render:
             self.render_window.Render()
-        # return self._raw_image
         return self._fast_image
 
     @property
