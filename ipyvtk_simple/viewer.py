@@ -34,11 +34,11 @@ class ViewInteractiveWidget(Canvas):
     ----------
     quality : float
         Compression quality.  100 for best quality, 0 for min quality.
-        Default 75.
+        Default 80.
     """
 
     def __init__(self, render_window, log_events=True,
-                 transparent_background=False, allow_wheel=True, quality=85,
+                 transparent_background=False, allow_wheel=True, quality=80,
                  **kwargs):
         """Accepts a vtkRenderWindow."""
 
