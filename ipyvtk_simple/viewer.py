@@ -183,8 +183,8 @@ class ViewInteractiveWidget(Canvas):
                     self.interactor.SetKeyCode(key)
                 self.interactor.SetRepeatCount(1)
             else:
-                self.interactor.SetEventPosition(
-                    event["offsetX"], self.height - event["offsetY"]
+                self.interactor.SetEventPosition(event["offsetX"],
+                                                 self.height - event["offsetY"]
                 )
             self.interactor.SetShiftKey(event["shiftKey"])
             self.interactor.SetControlKey(event["ctrlKey"])
@@ -194,16 +194,26 @@ class ViewInteractiveWidget(Canvas):
 
     def handle_interaction_event(self, event):
         event_name = event["event"]
+
+        # we have to scale the mouse movement here relative to the
+        # canvas size, otherwise mouse movement won't correspond to
+        # the render window.
+        if 'offsetX' in event:
+            scale_x = event['boundingRectWidth']/self.width
+            event['offsetX'] = round(event['offsetX']/scale_x)
+            scale_y = event['boundingRectHeight']/self.height
+            event['offsetY'] = round(event['offsetY']/scale_y)
+
         try:
             if self.log_events:
                 self.logged_events.append(event)
             if event_name == "mousemove":
-                import time
 
                 if self.message_timestamp_offset is None:
                     self.message_timestamp_offset = (
                         time.time() - event["timeStamp"] * 0.001
                     )
+
                 self.last_mouse_move_event = event
                 if not self.dragging and not self.track_mouse_move:
                     return
@@ -221,7 +231,8 @@ class ViewInteractiveWidget(Canvas):
                         self.age_of_processed_messages.append(
                             [ageOfProcessedMessage, self.quick_render_delay_sec]
                         )
-                # We need to render something now it no rendering since self.quick_render_delay_sec
+                # We need to render something now it no rendering
+                # since self.quick_render_delay_sec
                 if time.time() - self.last_render_time > self.quick_render_delay_sec:
                     self.quick_render()
             elif event_name == "mouseenter":
