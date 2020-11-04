@@ -57,7 +57,7 @@ class ViewInteractiveWidget(Canvas):
 
         # record first render time
         tstart = time.time()
-        self.put_image_data(self.get_image(force_render=True))
+        self.update_canvas()
         self._first_render_time = time.time() - tstart
         log.debug('First image in %.5f seconds', self._first_render_time)
 
@@ -124,6 +124,11 @@ class ViewInteractiveWidget(Canvas):
         elif delay_sec > self.quick_render_delay_sec_range[1]:
             delay_sec = self.quick_render_delay_sec_range[1]
         self.quick_render_delay_sec = delay_sec
+
+    def update_canvas():
+        """Updates the canvas with the current render"""
+        self.put_image_data(self.get_image(force_render=True))
+
 
     def get_image(self, force_render=True):
         if force_render:
