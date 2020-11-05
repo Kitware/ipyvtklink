@@ -35,11 +35,17 @@ class ViewInteractiveWidget(Canvas):
     quality : float
         Compression quality.  100 for best quality, 0 for min quality.
         Default 80.
+
+    on_close : callable
+        A callable function with no aruments to be triggered when the widget
+        is destroyed. This is useful to have a callback to close/clean up the
+        render window.
+
     """
 
     def __init__(self, render_window, log_events=True,
                  transparent_background=False, allow_wheel=True, quality=80,
-                 **kwargs):
+                 on_close=None, **kwargs):
         """Accepts a vtkRenderWindow."""
 
         super().__init__(**kwargs)
@@ -118,6 +124,11 @@ class ViewInteractiveWidget(Canvas):
         self.logged_events = []
         self.elapsed_times = []
         self.age_of_processed_messages = []
+
+        if hasattr(on_close, '__call__'):
+            self._on_close = on_close
+        else:
+            self._on_close = lambda: None
 
     @property
     def render_window(self):
@@ -325,3 +336,11 @@ class ViewInteractiveWidget(Canvas):
 
         except Exception as e:
             self.error = str(e)
+
+    def close(self):
+        super().close()
+        self._on_close()
+
+    def __del__(self):
+        super().__del__()
+        self.close()
