@@ -28,7 +28,7 @@ To build and run in Docker:
 
 ```
 docker build -t ipyvtk_simple .
-docker run -p 8878:8878 ipyvtk_simple jupyter notebook --port=8878 --no-browser --ip=0.0.0.0 --allow-root
+docker run -p 8878:8878 ipyvtk_simple jupyter lab --port=8878 --no-browser --ip=0.0.0.0 --allow-root
 ```
 
 and open the `pyvista.ipynb` notebook.
@@ -38,7 +38,7 @@ Additionally, this can be used with ParaView. An example is given in
 
 ```
 docker build -t ipyvtk_pv -f paraview.dockerfile .
-docker run -p 8877:8877 ipyvtk_pv jupyter notebook --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+docker run -p 8877:8877 ipyvtk_pv jupyter lab --port=8877 --no-browser --ip=0.0.0.0 --allow-root
 ```
 
 and open the `paraview.ipynb` notebook.
