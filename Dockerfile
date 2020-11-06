@@ -1,4 +1,5 @@
 FROM continuumio/miniconda3 AS conda
+MAINTAINER Bane Sullivan "bane.sullivan@kitware.com"
 SHELL ["/bin/bash", "-c"]
 
 ARG NB_USER=jovyan
@@ -16,18 +17,22 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini && \
     rm -rf /var/lib/apt/lists/*
 
+RUN conda install --quiet --yes nodejs
 RUN conda install --quiet --yes -c conda-forge \
     ipywidgets \
     ipycanvas>=0.5.0 \
-    jupyter \
+    ipyevents>=0.8.0 \
+    jupyterlab \
     ipython \
     pillow \
     pyvista \
     matplotlib \
     scipy
 
-# This version isn't on conda-forge yet
-RUN pip install 'ipyevents>=0.8.0'
+RUN jupyter labextension install \
+    @jupyter-widgets/jupyterlab-manager \
+    ipycanvas \
+    ipyevents
 
 WORKDIR $HOME
 COPY . ./ipyvtk_simple/
@@ -40,4 +45,4 @@ RUN chmod a+x /sbin/start_xvfb.sh
 
 ENTRYPOINT ["tini", "-g", "--", "start_xvfb.sh"]
 CMD ["/bin/bash"]
-# CMD ["jupyter", "notebook", "--port=8877", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+# CMD ["jupyter", "notebook", "--port=8878", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
