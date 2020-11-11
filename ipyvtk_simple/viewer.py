@@ -32,20 +32,28 @@ class ViewInteractiveWidget(Canvas):
 
     Parameters
     ----------
-    quality : float
-        Compression quality.  100 for best quality, 0 for min quality.
-        Default 80.
+    allow_wheel : bool, optional
+        Capture wheel events and allow zooming using the mouse wheel.
+
+    quality : float, optional
+        Full rendering image quality.  100 for best quality, 0 for min
+        quality.  Default 85.
+
+    quick_quality : float, optional
+        Quick rendering image quality during mouse dragging.  100 for
+        best quality, 0 for min quality.  Default 50.  Keep this
+        number low to allow rapid rendering on limited bandwidth.
 
     on_close : callable
-        A callable function with no aruments to be triggered when the widget
+        A callable function with no arguments to be triggered when the widget
         is destroyed. This is useful to have a callback to close/clean up the
         render window.
 
     """
 
     def __init__(self, render_window, log_events=True,
-                 transparent_background=False, allow_wheel=True, quality=80,
-                 on_close=None, **kwargs):
+                 transparent_background=False, allow_wheel=True, quality=85,
+                 quick_quality=50, on_close=None, **kwargs):
         """Accepts a vtkRenderWindow."""
 
         super().__init__(**kwargs)
@@ -55,6 +63,9 @@ class ViewInteractiveWidget(Canvas):
         self._render_window = weakref.ref(render_window)
         self.render_window.SetOffScreenRendering(1)  # Force off screen
         self.transparent_background = transparent_background
+
+        self._full_quality = quality
+        self._quick_quality = quick_quality
 
         # Frame rate (1/renderDelay)
         self.last_render_time = 0
@@ -149,11 +160,11 @@ class ViewInteractiveWidget(Canvas):
             delay_sec = self.quick_render_delay_sec_range[1]
         self.quick_render_delay_sec = delay_sec
 
-    def update_canvas(self, force_render=True):
+    def update_canvas(self, force_render=True, quality=75):
         """Updates the canvas with the current render"""
         raw_img = self.get_image(force_render=force_render)
         f = BytesIO()
-        PIL.Image.fromarray(raw_img).save(f, 'JPEG', quality=self._quality)
+        PIL.Image.fromarray(raw_img).save(f, 'JPEG', quality=quality)
         image = Image(
             value=f.getvalue(), width=self.width, height=self.height
         )
@@ -184,7 +195,7 @@ class ViewInteractiveWidget(Canvas):
         try:
             import time
             tstart = time.time()
-            self.update_canvas(True)
+            self.update_canvas(True, self._full_quality)
             self.last_render_time = time.time()
             log.debug('full render in %.5f seconds', time.time() - tstart)
         except Exception as e:
@@ -200,7 +211,7 @@ class ViewInteractiveWidget(Canvas):
     def quick_render(self):
         try:
             self.send_pending_mouse_move_event()
-            self.update_canvas()
+            self.update_canvas(quality=self._quick_quality)
             if self.log_events:
                 self.elapsed_times.append(time.time() - self.last_render_time)
             self.last_render_time = time.time()
