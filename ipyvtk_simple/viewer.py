@@ -243,11 +243,17 @@ class ViewInteractiveWidget(Canvas):
         # we have to scale the mouse movement here relative to the
         # canvas size, otherwise mouse movement won't correspond to
         # the render window.
+
+
         if 'offsetX' in event:
+            event['offsetX'] = round(event["clientX"]-event["boundingRectLeft"]) #re-calculate coordinates
             scale_x = self.width/event['boundingRectWidth']
             event['offsetX'] = round(event['offsetX']*scale_x)
+            event['offsetY'] = round(event["clientY"]-event["boundingRectTop"]) #re-calculate coordinates
+            scale_x = self.width/event['boundingRectWidth']
             scale_y = self.height/event['boundingRectHeight']
             event['offsetY'] = round(event['offsetY']*scale_y)
+
 
         try:
             if self.log_events:
