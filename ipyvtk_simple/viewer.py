@@ -250,7 +250,6 @@ class ViewInteractiveWidget(Canvas):
             scale_x = self.width/event['boundingRectWidth']
             event['offsetX'] = round(event['offsetX']*scale_x)
             event['offsetY'] = round(event["clientY"]-event["boundingRectTop"]) #re-calculate coordinates
-            scale_x = self.width/event['boundingRectWidth']
             scale_y = self.height/event['boundingRectHeight']
             event['offsetY'] = round(event['offsetY']*scale_y)
 
