@@ -13,11 +13,11 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini && \
+RUN wget -qO - https://deb.nodesource.com/setup_15.x | bash && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-RUN conda install --quiet --yes nodejs
 RUN conda install --quiet --yes -c conda-forge \
     ipywidgets \
     ipycanvas>=0.5.0 \
