@@ -2,7 +2,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-package_name = "ipyvtk_simple"
+package_name = "ipyvtklink"
 
 __version__ = None
 filepath = os.path.dirname(__file__)
@@ -35,7 +35,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    url="https://github.com/Kitware/ipyvtk-simple",
+    url="https://github.com/Kitware/ipyvtklink",
     keywords="vtk plotting jupyter",
     python_requires=">=3.5.*",
     install_requires=[

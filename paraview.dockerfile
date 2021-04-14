@@ -1,4 +1,4 @@
-FROM ipyvtk_simple
+FROM ipyvtklink
 
 # Have to uninstall VTK because ParaView bundles it's own
 RUN conda uninstall --quiet --yes pyvista vtk
