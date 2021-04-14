@@ -2,6 +2,7 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtklink/master)
 [![PyPI](https://img.shields.io/pypi/v/ipyvtklink.svg?logo=python&logoColor=white)](https://pypi.org/project/ipyvtklink/)
+[![conda](https://img.shields.io/conda/vn/conda-forge/ipyvtklink.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/ipyvtklink)
 
 *An ipywidget for vtkRenderWindow* (formerly `ipyvtk-simple`)
 
@@ -21,6 +22,19 @@ Please note that `vtk` is not listed as a requirement for this package to
 simplify its installation in virtual environments where VTK may be built from
 source or bundled with ParaView and we do not want to install the wheels from
 PyPI.
+
+## Installation
+
+For use with PyVista, simply install with `pip` or `conda`:
+
+```
+pip install ipyvtklink
+```
+
+or
+```
+conda install -c conda-forge ipyvtklink
+```
 
 ## Run in Docker
 
