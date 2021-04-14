@@ -1,9 +1,9 @@
-# ipyvtk_simple
+# ipyvtklink
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtk-simple/master)
-[![PyPI](https://img.shields.io/pypi/v/ipyvtk_simple.svg?logo=python&logoColor=white)](https://pypi.org/project/ipyvtk_simple/)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Kitware/ipyvtklink/master)
+[![PyPI](https://img.shields.io/pypi/v/ipyvtklink.svg?logo=python&logoColor=white)](https://pypi.org/project/ipyvtklink/)
 
-*An ipywidget for vtkRenderWindow*
+*An ipywidget for vtkRenderWindow* (formerly `ipyvtk-simple`)
 
 This is an early prototype of creating a Jupyter interface to VTK. This toolkit
 is a proof of concept and a more polished tool will be available as
@@ -27,8 +27,8 @@ PyPI.
 To build and run in Docker:
 
 ```
-docker build -t ipyvtk_simple .
-docker run -p 8878:8878 ipyvtk_simple jupyter lab --port=8878 --no-browser --ip=0.0.0.0 --allow-root
+docker build -t ipyvtklink .
+docker run -p 8878:8878 ipyvtklink jupyter lab --port=8878 --no-browser --ip=0.0.0.0 --allow-root
 ```
 
 and open the `pyvista.ipynb` notebook.
@@ -55,9 +55,9 @@ PyVista is working to implement this in [a pull request](https://github.com/pyvi
 See the `pyvista.ipynb` for a proof of concept.
 
 
-![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-1.gif)
+![demo-1](https://raw.githubusercontent.com/Kitware/ipyvtklink/master/assets/demo-1.gif)
 
-![demo-2](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-2.gif)
+![demo-2](https://raw.githubusercontent.com/Kitware/ipyvtklink/master/assets/demo-2.gif)
 
 
 ### Python VTK
@@ -67,7 +67,7 @@ to pass any `vtkRenderWindow` to the `ViewInteractiveWidget`:
 
 ```py
 import vtk
-from ipyvtk_simple.viewer import ViewInteractiveWidget
+from ipyvtklink.viewer import ViewInteractiveWidget
 
 # Create some data
 cylinder = vtk.vtkCylinderSource()
@@ -96,7 +96,7 @@ ren.ResetCamera()
 ViewInteractiveWidget(ren_win)
 ```
 
-![demo-3](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-3.gif)
+![demo-3](https://raw.githubusercontent.com/Kitware/ipyvtklink/master/assets/demo-3.gif)
 
 
 ### ParaView Python
@@ -105,7 +105,7 @@ See instructions above for running ParaView in a Docker container.
 
 ```py
 import paraview.simple as pvs
-from ipyvtk_simple.viewer import ViewInteractiveWidget
+from ipyvtklink.viewer import ViewInteractiveWidget
 
 # Create data on the pipeline
 wavelet = pvs.Wavelet()
@@ -126,4 +126,4 @@ ren_win = view.GetClientSideObject().GetRenderWindow()
 ViewInteractiveWidget(ren_win)
 ```
 
-![demo-4](https://raw.githubusercontent.com/Kitware/ipyvtk-simple/master/assets/demo-4.gif)
+![demo-4](https://raw.githubusercontent.com/Kitware/ipyvtklink/master/assets/demo-4.gif)

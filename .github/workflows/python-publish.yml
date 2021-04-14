@@ -28,7 +28,7 @@ jobs:
     - name: Test (not implemented)
       run: |
         pip install -e .
-        python -c "import ipyvtk_simple; print('Import went okay!')"
+        python -c "import ipyvtklink; print('Import went okay!')"
     - name: Build and Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       env:
