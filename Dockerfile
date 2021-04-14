@@ -17,19 +17,23 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini && \
     rm -rf /var/lib/apt/lists/*
 
-RUN conda install --quiet --yes nodejs
-RUN conda install --quiet --yes -c conda-forge \
-    ipywidgets \
-    ipycanvas>=0.5.0 \
-    ipyevents>=0.8.0 \
+RUN conda install --yes -c conda-forge \
+    'nodejs>=12.0.0' \
     jupyterlab \
-    ipython \
+    ipywidgets \
+    'ipycanvas>=0.5.0' \
+    'ipyevents>=0.8.0' \
     pillow \
     pyvista \
     matplotlib \
     scipy
 
 RUN jupyter labextension install \
+    @jupyter-widgets/jupyterlab-manager \
+    ipycanvas \
+    ipyevents
+
+RUN jupyter labextension enable \
     @jupyter-widgets/jupyterlab-manager \
     ipycanvas \
     ipyevents
