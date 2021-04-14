@@ -39,8 +39,8 @@ RUN jupyter labextension enable \
     ipyevents
 
 WORKDIR $HOME
-COPY . ./ipyvtk_simple/
-WORKDIR $HOME/ipyvtk_simple
+COPY . ./ipyvtklink/
+WORKDIR $HOME/ipyvtklink
 
 RUN pip install .
 
