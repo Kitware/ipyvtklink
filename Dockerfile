@@ -1,52 +1,28 @@
-FROM continuumio/miniconda3 AS conda
+FROM jupyter/base-notebook:python-3.9.7
 MAINTAINER Bane Sullivan "bane.sullivan@kitware.com"
-SHELL ["/bin/bash", "-c"]
 
-ARG NB_USER=jovyan
-ARG NB_UID=1000
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-ENV HOME /home/${NB_USER}
+USER root
+RUN apt-get update \
+ && apt-get install  -yq --no-install-recommends \
+    libfontconfig1 \
+    libxrender1 \
+    libosmesa6 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN adduser --disabled-password \
-    --gecos "Default user" \
-    --uid ${NB_UID} \
-    ${NB_USER}
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1-mesa-dev xvfb tini && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN conda install --yes -c conda-forge \
-    'nodejs>=12.0.0' \
-    jupyterlab \
-    ipywidgets \
-    'ipycanvas>=0.5.0' \
-    'ipyevents>=0.8.0' \
-    pillow \
-    pyvista \
-    matplotlib \
-    scipy
-
-RUN jupyter labextension install \
-    @jupyter-widgets/jupyterlab-manager \
-    ipycanvas \
-    ipyevents
-
-RUN jupyter labextension enable \
-    @jupyter-widgets/jupyterlab-manager \
-    ipycanvas \
-    ipyevents
-
-WORKDIR $HOME
-COPY . ./ipyvtklink/
-WORKDIR $HOME/ipyvtklink
-
+COPY setup.py /build-context/
+COPY LICENSE /build-context/
+COPY README.md /build-context/
+COPY ipyvtklink /build-context/ipyvtklink
+WORKDIR /build-context/
 RUN pip install .
 
-COPY start.sh /sbin/start_xvfb.sh
-RUN chmod a+x /sbin/start_xvfb.sh
+# Install PyVista's custom VTK wheel
+RUN pip install https://github.com/pyvista/pyvista-wheels/raw/main/vtk-osmesa-9.1.0-cp39-cp39-linux_x86_64.whl
 
-ENTRYPOINT ["tini", "-g", "--", "start_xvfb.sh"]
-CMD ["/bin/bash"]
-# CMD ["jupyter", "notebook", "--port=8878", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+# allow jupyterlab for ipyvtk
+ENV JUPYTER_ENABLE_LAB=yes
+ENV PYVISTA_USE_IPYVTK=true
+
+USER jovyan
+WORKDIR $HOME
+COPY vtk.ipynb $HOME/
