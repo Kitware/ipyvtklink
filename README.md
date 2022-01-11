@@ -38,24 +38,24 @@ conda install -c conda-forge ipyvtklink
 
 ## Run in Docker
 
-To build and run in Docker:
+A Docker image is prebuilt and hosted in the ipyvtklink repository's packages.
+
+To run in Docker:
 
 ```
-docker build -t ipyvtklink .
-docker run -p 8878:8878 ipyvtklink jupyter lab --port=8878 --no-browser --ip=0.0.0.0 --allow-root
+docker pull ghcr.io/kitware/ipyvtklink:latest
+docker run -p 8888:8888 ghcr.io/kitware/ipyvtklink:latest
 ```
 
-and open the `pyvista.ipynb` notebook.
+and open the `vtk.ipynb` notebook.
 
 Additionally, this can be used with ParaView. An example is given in
 `paraview.ipynb` which can be run via:
 
 ```
-docker build -t ipyvtk_pv -f paraview.dockerfile .
-docker run -p 8877:8877 ipyvtk_pv jupyter lab --port=8877 --no-browser --ip=0.0.0.0 --allow-root
+docker pull ghcr.io/kitware/ipyvtklink/paraview:latest
+docker run -p 8878:8878 ghcr.io/kitware/ipyvtklink/paraview:latest
 ```
-
-and open the `paraview.ipynb` notebook.
 
 ## Examples
 
@@ -65,7 +65,7 @@ known to work well in Notebook.
 
 ### PyVista
 
-PyVista has fully implemented downstream support for `ipyvtklink`. See [PyVista's Documentation](https://docs.pyvista.org/plotting/notebook_plotting/index.html)
+PyVista has fully implemented downstream support for `ipyvtklink`. See [PyVista's Documentation](https://docs.pyvista.org/user-guide/jupyter/ipyvtk_plotting.html)
 
 See the `pyvista.ipynb` for an original proof of concept.
 
