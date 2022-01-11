@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3 AS conda
+FROM condaforge/miniforge3:4.10.3-7
 MAINTAINER Bane Sullivan "bane.sullivan@kitware.com"
 SHELL ["/bin/bash", "-c"]
 
@@ -19,24 +19,13 @@ RUN apt-get update && \
 
 RUN conda install --yes -c conda-forge \
     'nodejs>=12.0.0' \
-    jupyterlab \
+    'jupyterlab>=3' \
     ipywidgets \
     'ipycanvas>=0.5.0' \
     'ipyevents>=0.8.0' \
     pillow \
-    pyvista \
     matplotlib \
     scipy
-
-RUN jupyter labextension install \
-    @jupyter-widgets/jupyterlab-manager \
-    ipycanvas \
-    ipyevents
-
-RUN jupyter labextension enable \
-    @jupyter-widgets/jupyterlab-manager \
-    ipycanvas \
-    ipyevents
 
 WORKDIR $HOME
 COPY . ./ipyvtklink/
@@ -47,11 +36,9 @@ RUN pip install .
 COPY start.sh /sbin/start_xvfb.sh
 RUN chmod a+x /sbin/start_xvfb.sh
 
-# Have to uninstall VTK because ParaView bundles it's own
-RUN conda uninstall --quiet --yes pyvista vtk
+# NOTE ParaView bundles it's own VTK
 RUN conda install --quiet --yes -c conda-forge paraview=5.8.0
 
-
 ENTRYPOINT ["tini", "-g", "--", "start_xvfb.sh"]
-CMD ["/bin/bash"]
-# CMD ["jupyter", "notebook", "--port=8878", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+# CMD ["/bin/bash"]
+CMD ["jupyter", "notebook", "--port=8878", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
