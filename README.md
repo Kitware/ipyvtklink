@@ -53,8 +53,8 @@ Additionally, this can be used with ParaView. An example is given in
 `paraview.ipynb` which can be run via:
 
 ```
-docker pull ghcr.io/kitware/ipyvtklink/paraview:latest
-docker run -p 8878:8878 ghcr.io/kitware/ipyvtklink/paraview:latest
+docker pull ghcr.io/kitware/ipyvtklink-paraview:latest
+docker run -p 8878:8878 ghcr.io/kitware/ipyvtklink-paraview:latest
 ```
 
 ## Examples
