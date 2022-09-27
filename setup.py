@@ -41,5 +41,5 @@ setup(
     install_requires=[
         "ipycanvas>=0.5.0",
         "ipyevents>=0.8.0",
-        "ipywidgets",],
+        "ipywidgets~=7.7",],
 )

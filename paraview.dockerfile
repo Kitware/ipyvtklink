@@ -21,7 +21,7 @@ RUN conda install --yes -c conda-forge \
     python=3.7 \
     'nodejs>=12.0.0' \
     'jupyterlab>=3' \
-    ipywidgets \
+    'ipywidgets~=7.7' \
     'ipycanvas>=0.5.0' \
     'ipyevents>=0.8.0' \
     pillow \
