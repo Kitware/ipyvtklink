@@ -43,7 +43,9 @@ jobs:
 
   build-and-publish-paraview:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository )
+    if: false
+    # NOTE: Disabled for now
+    # github.event_name == 'push' || ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository )
     steps:
       - uses: actions/checkout@v2
 
