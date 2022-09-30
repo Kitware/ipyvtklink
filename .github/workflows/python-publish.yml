@@ -32,8 +32,8 @@ jobs:
     - name: Build and Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         python setup.py sdist bdist_wheel
         twine upload --skip-existing dist/*
