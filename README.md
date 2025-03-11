@@ -65,7 +65,7 @@ known to work well in Notebook.
 
 ### PyVista
 
-PyVista has fully implemented downstream support for `ipyvtklink`. See [PyVista's Documentation](https://docs.pyvista.org/user-guide/jupyter/ipyvtk_plotting.html)
+PyVista has fully implemented downstream support for `ipyvtklink`. See [PyVista's Documentation](https://docs.pyvista.org/user-guide/jupyter/)
 
 See the `pyvista.ipynb` for an original proof of concept.
 
